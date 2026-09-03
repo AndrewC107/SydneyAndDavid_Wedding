@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Outfit } from "next/font/google";
+import { Cormorant_Garamond, Great_Vibes, Outfit } from "next/font/google";
 import { wedding, coupleNames } from "@/config/wedding";
 import "./globals.css";
 
@@ -15,6 +15,13 @@ const outfit = Outfit({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
   variable: "--font-outfit",
+  display: "swap",
+});
+
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-great-vibes",
   display: "swap",
 });
 
@@ -56,7 +63,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${outfit.variable}`}>
+    <html
+      lang="en"
+      className={`${cormorant.variable} ${greatVibes.variable} ${outfit.variable}`}
+    >
       <body className="min-h-dvh bg-cream font-sans text-charcoal antialiased">
         {children}
       </body>

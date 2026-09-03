@@ -12,6 +12,7 @@
   --color-sage: #7e8d70;
   --color-olive: #5f6e52;
   --font-display: var(--font-cormorant), "Palatino Linotype", Palatino, serif;
+  --font-script: var(--font-great-vibes), "Segoe Script", cursive;
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
 }
 

@@ -1,6 +1,18 @@
 import Image from "next/image";
 import { coupleNames, venueLocation, wedding } from "@/config/wedding";
 
+/**
+ * Inner opening of the lace frame, measured from lace-border.webp (900×1350).
+ * Sized to the outer lip of that opening so the cloth tucks under the lace
+ * and the visible inner border stays aligned.
+ */
+const LACE_WINDOW = {
+  top: "10.44%",
+  right: "15.56%",
+  bottom: "10.37%",
+  left: "15.67%",
+} as const;
+
 export function Hero() {
   return (
     <section className="relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden px-4 py-16 sm:px-8">
@@ -18,59 +30,10 @@ export function Hero() {
         aria-hidden="true"
       />
 
-      <div className="animate-fade-up relative z-10 w-full max-w-[20.5rem] sm:max-w-md md:max-w-lg">
-        <div className="relative">
-          <div className="relative overflow-hidden bg-linen px-7 py-12 shadow-[0_18px_50px_rgba(42,34,28,0.16)] sm:px-11 sm:py-16">
-            <Image
-              src="/images/linen-texture.jpg"
-              alt=""
-              fill
-              sizes="(max-width: 480px) 90vw, 512px"
-              className="object-cover object-center"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute inset-0 bg-linen/45"
-              aria-hidden="true"
-            />
-
-            <div className="relative z-10 text-center text-espresso">
-              <p className="font-sans text-[0.68rem] font-medium tracking-[0.38em] text-olive uppercase">
-                Save the Date
-              </p>
-
-              <h1 className="mt-6 font-display text-[3.85rem] leading-[0.88] font-normal italic sm:text-[5.25rem] md:text-[6rem]">
-                <span className="block">{wedding.couple.personOne}</span>
-                <span
-                  className="mt-1 block font-display text-[2rem] font-normal not-italic text-peach sm:text-[2.5rem]"
-                  aria-hidden="true"
-                >
-                  &
-                </span>
-                <span className="sr-only"> and </span>
-                <span className="mt-1 block">{wedding.couple.personTwo}</span>
-              </h1>
-
-              <div
-                className="mx-auto mt-8 h-px w-16 bg-peach/50"
-                aria-hidden="true"
-              />
-
-              <p className="mt-7 font-sans text-[0.78rem] font-medium tracking-[0.22em] text-charcoal uppercase">
-                {wedding.date.display}
-              </p>
-
-              <p className="mt-4 font-display text-[1.35rem] leading-snug italic sm:text-[1.5rem]">
-                {wedding.venue.name}
-              </p>
-              <p className="mt-1 font-sans text-sm tracking-[0.08em] text-charcoal/80">
-                {venueLocation}
-              </p>
-            </div>
-          </div>
-
+      <div className="animate-fade-up relative z-10 w-full max-w-[21.5rem] sm:max-w-md md:max-w-lg">
+        <div className="relative aspect-[2/3] w-full">
           <div
-            className="pointer-events-none absolute -inset-3 z-20 sm:-inset-5"
+            className="pointer-events-none absolute inset-0 z-20"
             aria-hidden="true"
           >
             <Image
@@ -78,8 +41,57 @@ export function Hero() {
               alt=""
               fill
               sizes="(max-width: 480px) 95vw, 560px"
-              className="object-fill"
+              className="object-contain"
             />
+          </div>
+
+          <div
+            className="absolute z-10 overflow-hidden bg-linen"
+            style={LACE_WINDOW}
+          >
+            <Image
+              src="/images/linen-texture.jpg"
+              alt=""
+              fill
+              sizes="(max-width: 480px) 70vw, 420px"
+              className="object-cover object-center"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-linen/45" aria-hidden="true" />
+
+            <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 py-6 text-center text-espresso sm:px-6 sm:py-8">
+              <p className="font-sans text-[0.68rem] font-medium tracking-[0.38em] text-olive uppercase">
+                Save the Date
+              </p>
+
+              <h1 className="mt-5 font-script text-[3.35rem] leading-[1.12] font-normal sm:text-[4.15rem] md:text-[4.75rem]">
+                <span className="block">{wedding.couple.personOne}</span>
+                <span
+                  className="mt-0 block font-script text-[2rem] text-peach sm:text-[2.35rem]"
+                  aria-hidden="true"
+                >
+                  &
+                </span>
+                <span className="sr-only"> and </span>
+                <span className="block">{wedding.couple.personTwo}</span>
+              </h1>
+
+              <div
+                className="mx-auto mt-5 h-px w-14 bg-peach/50"
+                aria-hidden="true"
+              />
+
+              <p className="mt-5 font-sans text-[0.72rem] font-medium tracking-[0.22em] text-charcoal uppercase sm:text-[0.78rem]">
+                {wedding.date.display}
+              </p>
+
+              <p className="mt-3 font-display text-[1.25rem] leading-snug italic sm:text-[1.45rem]">
+                {wedding.venue.name}
+              </p>
+              <p className="mt-1 font-sans text-[0.8rem] tracking-[0.08em] text-charcoal/80 sm:text-sm">
+                {venueLocation}
+              </p>
+            </div>
           </div>
 
           <Image
@@ -87,7 +99,7 @@ export function Hero() {
             alt=""
             width={220}
             height={330}
-            className="pointer-events-none absolute -right-4 top-8 z-30 w-[46%] max-w-[8.75rem] drop-shadow-[0_8px_16px_rgba(42,34,28,0.18)] sm:-right-7 sm:top-10 sm:max-w-[11rem]"
+            className="pointer-events-none absolute -right-3 top-[16%] z-30 w-[40%] max-w-[8.5rem] drop-shadow-[0_8px_16px_rgba(42,34,28,0.18)] sm:-right-5 sm:max-w-[10.5rem]"
             aria-hidden="true"
           />
         </div>
