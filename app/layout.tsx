@@ -21,6 +21,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: wedding.meta.title,
   description: wedding.meta.description,
+  metadataBase: new URL("https://andrewc107.github.io/SydneyAndDavid_Wedding"),
   openGraph: {
     title: wedding.meta.title,
     description: wedding.meta.description,
