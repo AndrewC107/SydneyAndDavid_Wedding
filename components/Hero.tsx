@@ -30,7 +30,7 @@ export function Hero() {
         aria-hidden="true"
       />
 
-      <div className="animate-fade-up relative z-10 w-full max-w-[21.5rem] sm:max-w-md md:max-w-lg">
+      <div className="animate-hero-in relative z-10 w-full max-w-[21.5rem] sm:max-w-md md:max-w-lg">
         <div className="relative aspect-[2/3] w-full">
           <div
             className="pointer-events-none absolute inset-0 z-20"

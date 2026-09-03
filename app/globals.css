@@ -62,9 +62,14 @@ body {
   animation: fade-up 1.4s ease-out both;
 }
 
+.animate-hero-in {
+  animation: fade-up 0.9s ease-out 0.5s both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
-  .animate-fade-in {
+  .animate-fade-in,
+  .animate-hero-in {
     animation: none;
   }
 }
