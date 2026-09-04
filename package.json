@@ -6,9 +6,12 @@
     "dev": "node ./node_modules/next/dist/bin/next dev",
     "build": "node ./node_modules/next/dist/bin/next build",
     "start": "node ./node_modules/next/dist/bin/next start",
-    "lint": "node ./node_modules/eslint/bin/eslint.js"
+    "lint": "node ./node_modules/eslint/bin/eslint.js",
+    "convex:dev": "node ./node_modules/convex/bin/main.js dev",
+    "convex:deploy": "node ./node_modules/convex/bin/main.js deploy"
   },
   "dependencies": {
+    "convex": "^1.45.0",
     "next": "^16.0.7",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

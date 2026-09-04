@@ -2,7 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { wedding } from "@/config/wedding";
-import { handleRSVPSubmit, type Attendance } from "@/lib/rsvp";
+import { handleRSVPSubmit } from "@/lib/rsvp";
+import type { Attendance } from "@/lib/rsvp-types";
 
 const attendanceOptions: { value: Attendance; label: string }[] = [
   { value: "yes", label: "I'll be there" },
@@ -58,9 +59,13 @@ export function RSVPForm() {
             : undefined,
       });
       setStatus("success");
-    } catch {
+    } catch (error) {
       setStatus("error");
-      setErrorMessage("Something went wrong. Please try again in a moment.");
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again in a moment.",
+      );
     }
   }
 
