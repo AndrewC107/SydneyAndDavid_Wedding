@@ -67,7 +67,7 @@ export function Hero() {
               <h1 className="mt-5 font-script text-[3.35rem] leading-[1.12] font-normal sm:text-[4.15rem] md:text-[4.75rem]">
                 <span className="block">{wedding.couple.personOne}</span>
                 <span
-                  className="mt-0 block font-script text-[2rem] text-peach sm:text-[2.35rem]"
+                  className="mt-0 block font-script text-[2rem] sm:text-[2.35rem]"
                   aria-hidden="true"
                 >
                   &

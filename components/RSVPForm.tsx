@@ -5,15 +5,18 @@ import { wedding } from "@/config/wedding";
 import { handleRSVPSubmit, type Attendance } from "@/lib/rsvp";
 
 const attendanceOptions: { value: Attendance; label: string }[] = [
-  { value: "yes", label: "Yes" },
-  { value: "no", label: "No" },
-  { value: "not_sure", label: "Not sure yet" },
+  { value: "yes", label: "I'll be there" },
+  { value: "no", label: "I unfortunately already know I can't make it" },
+  { value: "not_sure", label: "I'm not sure" },
 ];
 
 export function RSVPForm() {
   const [fullName, setFullName] = useState("");
   const [attending, setAttending] = useState<Attendance | "">("");
-  const [guestCount, setGuestCount] = useState("1");
+  const [street, setStreet] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle",
   );
@@ -28,6 +31,15 @@ export function RSVPForm() {
       return;
     }
 
+    if (
+      attending === "yes" &&
+      (!street.trim() || !city.trim() || !province.trim() || !postalCode.trim())
+    ) {
+      setStatus("error");
+      setErrorMessage("Please share your mailing address so we can send your formal invite.");
+      return;
+    }
+
     setStatus("submitting");
     setErrorMessage("");
 
@@ -35,8 +47,15 @@ export function RSVPForm() {
       await handleRSVPSubmit({
         fullName: fullName.trim(),
         attending,
-        guestCount:
-          attending === "no" ? undefined : Number.parseInt(guestCount, 10) || 1,
+        mailingAddress:
+          attending === "yes"
+            ? {
+                street: street.trim(),
+                city: city.trim(),
+                province: province.trim(),
+                postalCode: postalCode.trim(),
+              }
+            : undefined,
       });
       setStatus("success");
     } catch {
@@ -46,7 +65,7 @@ export function RSVPForm() {
   }
 
   return (
-    <section id="rsvp" className="bg-cream px-6 py-20 sm:px-8 sm:py-24">
+    <section id="rsvp" className="bg-ivory px-6 py-20 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-md text-center">
         <p className="font-sans text-[0.68rem] font-medium tracking-[0.32em] text-olive uppercase">
           {wedding.rsvp.heading}
@@ -66,7 +85,7 @@ export function RSVPForm() {
           <form className="mt-10 text-left" onSubmit={onSubmit} noValidate>
             <label className="block">
               <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
-                Full Name
+                Name
               </span>
               <input
                 type="text"
@@ -84,13 +103,13 @@ export function RSVPForm() {
               <legend className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
                 Will you be able to join us?
               </legend>
-              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <div className="mt-3 grid grid-cols-1 gap-2">
                 {attendanceOptions.map((option) => {
                   const selected = attending === option.value;
                   return (
                     <label
                       key={option.value}
-                      className={`flex min-h-12 cursor-pointer items-center justify-center border px-3 text-center font-sans text-[0.85rem] tracking-wide transition-colors ${
+                      className={`flex min-h-12 cursor-pointer items-center justify-center border px-4 py-3 text-center font-sans text-[0.85rem] leading-snug tracking-wide transition-colors ${
                         selected
                           ? "border-peach bg-apricot/25 text-espresso"
                           : "border-beige bg-linen text-charcoal hover:border-peach/50"
@@ -111,24 +130,78 @@ export function RSVPForm() {
               </div>
             </fieldset>
 
-            {attending !== "no" && (
-              <label className="mt-7 block">
-                <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
-                  Number of Guests
-                </span>
-                <select
-                  name="guestCount"
-                  value={guestCount}
-                  onChange={(event) => setGuestCount(event.target.value)}
-                  className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso"
-                >
-                  {["1", "2", "3", "4", "5", "6"].map((count) => (
-                    <option key={count} value={count}>
-                      {count}
-                    </option>
-                  ))}
-                </select>
-              </label>
+            {attending === "yes" && (
+              <div className="mt-7 space-y-4">
+                <label className="block">
+                  <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
+                    Mailing Address
+                  </span>
+                  <input
+                    type="text"
+                    name="street"
+                    autoComplete="street-address"
+                    value={street}
+                    onChange={(event) => setStreet(event.target.value)}
+                    className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
+                    placeholder="Street address"
+                    required
+                  />
+                </label>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="block">
+                    <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
+                      City
+                    </span>
+                    <input
+                      type="text"
+                      name="city"
+                      autoComplete="address-level2"
+                      value={city}
+                      onChange={(event) => setCity(event.target.value)}
+                      className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
+                      placeholder="City"
+                      required
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
+                      Province
+                    </span>
+                    <input
+                      type="text"
+                      name="province"
+                      autoComplete="address-level1"
+                      value={province}
+                      onChange={(event) => setProvince(event.target.value)}
+                      className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
+                      placeholder="Province"
+                      required
+                    />
+                  </label>
+                </div>
+
+                <label className="block">
+                  <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
+                    Postal Code
+                  </span>
+                  <input
+                    type="text"
+                    name="postalCode"
+                    autoComplete="postal-code"
+                    value={postalCode}
+                    onChange={(event) => setPostalCode(event.target.value)}
+                    className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
+                    placeholder="Postal code"
+                    required
+                  />
+                </label>
+
+                <p className="font-display text-base text-espresso italic">
+                  Formal invite to follow
+                </p>
+              </div>
             )}
 
             {status === "error" && (
