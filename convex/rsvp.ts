@@ -1,6 +1,15 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { attendance, mailingAddress } from "./lib/rsvpValidators";
+
+const rsvpDoc = v.object({
+  _id: v.id("rsvps"),
+  _creationTime: v.number(),
+  fullName: v.string(),
+  attending: attendance,
+  mailingAddress: v.optional(mailingAddress),
+  submittedAt: v.number(),
+});
 
 function trimAddress(address: {
   street: string;
@@ -63,5 +72,17 @@ export const submit = mutation({
       attending: args.attending,
       submittedAt: Date.now(),
     });
+  },
+});
+
+export const list = query({
+  args: {},
+  returns: v.array(rsvpDoc),
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("rsvps")
+      .withIndex("by_submitted_at")
+      .order("desc")
+      .collect();
   },
 });
