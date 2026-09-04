@@ -7,8 +7,9 @@
     "build": "node ./node_modules/next/dist/bin/next build",
     "start": "node ./node_modules/next/dist/bin/next start",
     "lint": "node ./node_modules/eslint/bin/eslint.js",
-    "convex:dev": "node ./node_modules/convex/bin/main.js dev",
-    "convex:deploy": "node ./node_modules/convex/bin/main.js deploy"
+    "convex:dev": "node --use-system-ca ./node_modules/convex/bin/main.js dev",
+    "convex:deploy": "node --use-system-ca ./node_modules/convex/bin/main.js deploy",
+    "convex:push": "node --use-system-ca ./node_modules/convex/bin/main.js dev --once"
   },
   "dependencies": {
     "convex": "^1.45.0",
