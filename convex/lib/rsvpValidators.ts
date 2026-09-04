@@ -1,10 +1,18 @@
 import { v } from "convex/values";
 
-/** Guest attendance choice from the Save the Date form. */
+/** Responses guests can submit on the Save the Date site. */
+export const guestAttendance = v.union(
+  v.literal("yes"),
+  v.literal("no"),
+  v.literal("not_sure"),
+);
+
+/** All tracked response states, including manual no-response entries. */
 export const attendance = v.union(
   v.literal("yes"),
   v.literal("no"),
   v.literal("not_sure"),
+  v.literal("no_response"),
 );
 
 /** Mailing address — collected only when attending is "yes". */
