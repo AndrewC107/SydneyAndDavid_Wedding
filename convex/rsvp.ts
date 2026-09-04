@@ -33,19 +33,16 @@ function trimAddress(address: {
   };
 }
 
-async function insertRsvp(
-  ctx: MutationCtx,
-  args: {
-    fullName: string;
-    attending: AttendanceValue;
-    mailingAddress?: {
-      street: string;
-      city: string;
-      province: string;
-      postalCode: string;
-    };
-  },
-): Promise<Id<"rsvps">> {
+function validateRsvpInput(args: {
+  fullName: string;
+  attending: AttendanceValue;
+  mailingAddress?: {
+    street: string;
+    city: string;
+    province: string;
+    postalCode: string;
+  };
+}) {
   const fullName = args.fullName.trim();
 
   if (fullName.length < 2) {
@@ -72,17 +69,37 @@ async function insertRsvp(
       throw new Error("Please complete the mailing address.");
     }
 
-    return await ctx.db.insert("rsvps", {
+    return {
       fullName,
       attending: args.attending,
       mailingAddress: address,
-      submittedAt: Date.now(),
-    });
+    };
   }
 
-  return await ctx.db.insert("rsvps", {
+  return {
     fullName,
     attending: args.attending,
+    mailingAddress: undefined,
+  };
+}
+
+async function insertRsvp(
+  ctx: MutationCtx,
+  args: {
+    fullName: string;
+    attending: AttendanceValue;
+    mailingAddress?: {
+      street: string;
+      city: string;
+      province: string;
+      postalCode: string;
+    };
+  },
+): Promise<Id<"rsvps">> {
+  const fields = validateRsvpInput(args);
+
+  return await ctx.db.insert("rsvps", {
+    ...fields,
     submittedAt: Date.now(),
   });
 }
@@ -108,6 +125,42 @@ export const createManual = mutation({
   returns: v.id("rsvps"),
   handler: async (ctx, args) => {
     return await insertRsvp(ctx, args);
+  },
+});
+
+export const updateManual = mutation({
+  args: {
+    id: v.id("rsvps"),
+    fullName: v.string(),
+    attending: attendance,
+    mailingAddress: v.optional(mailingAddress),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const existing = await ctx.db.get("rsvps", args.id);
+    if (!existing) {
+      throw new Error("Entry not found.");
+    }
+
+    const fields = validateRsvpInput(args);
+    await ctx.db.patch(args.id, fields);
+    return null;
+  },
+});
+
+export const removeManual = mutation({
+  args: {
+    id: v.id("rsvps"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const existing = await ctx.db.get("rsvps", args.id);
+    if (!existing) {
+      throw new Error("Entry not found.");
+    }
+
+    await ctx.db.delete("rsvps", args.id);
+    return null;
   },
 });
 
