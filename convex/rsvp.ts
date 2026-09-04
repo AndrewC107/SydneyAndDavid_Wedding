@@ -1,18 +1,6 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-
-const attendanceValidator = v.union(
-  v.literal("yes"),
-  v.literal("no"),
-  v.literal("not_sure"),
-);
-
-const mailingAddressValidator = v.object({
-  street: v.string(),
-  city: v.string(),
-  province: v.string(),
-  postalCode: v.string(),
-});
+import { attendance, mailingAddress } from "./lib/rsvpValidators";
 
 function trimAddress(address: {
   street: string;
@@ -31,8 +19,8 @@ function trimAddress(address: {
 export const submit = mutation({
   args: {
     fullName: v.string(),
-    attending: attendanceValidator,
-    mailingAddress: v.optional(mailingAddressValidator),
+    attending: attendance,
+    mailingAddress: v.optional(mailingAddress),
   },
   returns: v.id("rsvps"),
   handler: async (ctx, args) => {

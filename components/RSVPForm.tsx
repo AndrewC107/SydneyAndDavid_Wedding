@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { wedding } from "@/config/wedding";
 import { handleRSVPSubmit } from "@/lib/rsvp";
 import type { Attendance } from "@/lib/rsvp-types";
@@ -22,6 +22,12 @@ export function RSVPForm() {
     "idle",
   );
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (status === "success") {
+      document.getElementById("rsvp")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [status]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -71,22 +77,24 @@ export function RSVPForm() {
 
   return (
     <section id="rsvp" className="bg-ivory px-6 py-20 sm:px-8 sm:py-24">
-      <div className="mx-auto max-w-md text-center">
-        <p className="font-sans text-[0.68rem] font-medium tracking-[0.32em] text-olive uppercase">
-          {wedding.rsvp.heading}
-        </p>
-        <p className="mt-4 font-display text-[1.45rem] leading-snug text-espresso italic sm:text-[1.65rem]">
-          {wedding.rsvp.supporting}
-        </p>
-
-        {status === "success" ? (
+      {status === "success" ? (
+        <div className="mx-auto w-full max-w-md text-center">
           <p
-            className="mt-12 border border-beige bg-linen px-6 py-10 font-display text-2xl text-espresso italic"
+            className="border border-beige bg-linen px-6 py-10 font-display text-2xl leading-snug text-espresso italic sm:text-[1.65rem]"
             role="status"
           >
-            {wedding.rsvp.confirmation}
+            {attending && wedding.rsvp.confirmation[attending]}
           </p>
-        ) : (
+        </div>
+      ) : (
+        <div className="mx-auto max-w-md text-center">
+          <p className="font-sans text-[0.68rem] font-medium tracking-[0.32em] text-olive uppercase">
+            {wedding.rsvp.heading}
+          </p>
+          <p className="mt-4 font-display text-[1.45rem] leading-snug text-espresso italic sm:text-[1.65rem]">
+            {wedding.rsvp.supporting}
+          </p>
+
           <form className="mt-10 text-left" onSubmit={onSubmit} noValidate>
             <label className="block">
               <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
@@ -100,7 +108,6 @@ export function RSVPForm() {
                 onChange={(event) => setFullName(event.target.value)}
                 className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
                 placeholder="Your name"
-                required
               />
             </label>
 
@@ -149,7 +156,6 @@ export function RSVPForm() {
                     onChange={(event) => setStreet(event.target.value)}
                     className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
                     placeholder="Street address"
-                    required
                   />
                 </label>
 
@@ -166,7 +172,6 @@ export function RSVPForm() {
                       onChange={(event) => setCity(event.target.value)}
                       className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
                       placeholder="City"
-                      required
                     />
                   </label>
 
@@ -182,7 +187,6 @@ export function RSVPForm() {
                       onChange={(event) => setProvince(event.target.value)}
                       className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
                       placeholder="Province"
-                      required
                     />
                   </label>
                 </div>
@@ -199,7 +203,6 @@ export function RSVPForm() {
                     onChange={(event) => setPostalCode(event.target.value)}
                     className="mt-2 h-12 w-full border border-beige bg-linen px-4 font-sans text-base text-espresso placeholder:text-charcoal/40"
                     placeholder="Postal code"
-                    required
                   />
                 </label>
 
@@ -223,8 +226,8 @@ export function RSVPForm() {
               {status === "submitting" ? "Sending…" : "Submit"}
             </button>
           </form>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as lib_rsvpValidators from "../lib/rsvpValidators.js";
 import type * as rsvp from "../rsvp.js";
 
 import type {
@@ -17,6 +18,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "lib/rsvpValidators": typeof lib_rsvpValidators;
   rsvp: typeof rsvp;
 }>;
 

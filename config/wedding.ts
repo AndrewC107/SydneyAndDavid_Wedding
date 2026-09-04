@@ -29,7 +29,11 @@ export const wedding = {
   rsvp: {
     heading: "Save the Date RSVP",
     supporting: "Let us know if you're planning to celebrate with us.",
-    confirmation: "Thank you! We can't wait to celebrate with you.",
+    confirmation: {
+      yes: "Thank you! We can't wait to celebrate with you.",
+      no: "Thank you for letting us know. We're sad you can't make it, but we appreciate you sharing the day with us in spirit.",
+      not_sure: "Thank you! We hope you'll be able to join us—please let us know as soon as you can.",
+    },
   },
 
   meta: {
