@@ -11,4 +11,9 @@ export type RSVPPayload = {
   fullName: string;
   attending: Attendance;
   mailingAddress?: MailingAddress;
+  notes?: string;
 };
+
+export function requiresMailingAddress(attending: Attendance | ""): boolean {
+  return attending === "yes" || attending === "not_sure";
+}

@@ -9,7 +9,8 @@ export default defineSchema({
    * |-----------------|-----------------------------------------|
    * | fullName        | Always                                  |
    * | attending       | Always — yes / no / not_sure              |
-   * | mailingAddress  | Only when attending is "yes"            |
+   * | mailingAddress  | When attending is "yes" or "not_sure"  |
+   * | notes           | Optional — any submission               |
    * | submittedAt     | Set automatically on submit (ms epoch)  |
    */
   rsvps: defineTable(rsvpFields)

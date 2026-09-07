@@ -28,19 +28,12 @@ function formatConvexError(error: unknown): string {
 
 export async function handleRSVPSubmit(data: RSVPPayload): Promise<void> {
   try {
-    await getConvexClient().mutation(
-      api.rsvp.submit,
-      data.mailingAddress
-        ? {
-            fullName: data.fullName,
-            attending: data.attending,
-            mailingAddress: data.mailingAddress,
-          }
-        : {
-            fullName: data.fullName,
-            attending: data.attending,
-          },
-    );
+    await getConvexClient().mutation(api.rsvp.submit, {
+      fullName: data.fullName,
+      attending: data.attending,
+      ...(data.mailingAddress ? { mailingAddress: data.mailingAddress } : {}),
+      ...(data.notes ? { notes: data.notes } : {}),
+    });
   } catch (error) {
     throw new Error(formatConvexError(error));
   }

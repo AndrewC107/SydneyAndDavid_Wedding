@@ -8,16 +8,35 @@ import {
   mailingAddress,
 } from "./lib/rsvpValidators";
 
+const NOTES_MAX_LENGTH = 1000;
+
 const rsvpDoc = v.object({
   _id: v.id("rsvps"),
   _creationTime: v.number(),
   fullName: v.string(),
   attending: attendance,
   mailingAddress: v.optional(mailingAddress),
+  notes: v.optional(v.string()),
   submittedAt: v.number(),
 });
 
 type AttendanceValue = "yes" | "no" | "not_sure" | "no_response";
+
+type RsvpInput = {
+  fullName: string;
+  attending: AttendanceValue;
+  mailingAddress?: {
+    street: string;
+    city: string;
+    province: string;
+    postalCode: string;
+  };
+  notes?: string;
+};
+
+function requiresMailingAddress(attending: AttendanceValue): boolean {
+  return attending === "yes" || attending === "not_sure";
+}
 
 function trimAddress(address: {
   street: string;
@@ -33,17 +52,19 @@ function trimAddress(address: {
   };
 }
 
-function validateRsvpInput(args: {
-  fullName: string;
-  attending: AttendanceValue;
-  mailingAddress?: {
-    street: string;
-    city: string;
-    province: string;
-    postalCode: string;
-  };
-}) {
+function normalizeNotes(notes?: string): string | undefined {
+  const trimmed = notes?.trim() ?? "";
+
+  if (trimmed.length > NOTES_MAX_LENGTH) {
+    throw new Error("Notes are too long.");
+  }
+
+  return trimmed || undefined;
+}
+
+function validateRsvpInput(args: RsvpInput) {
   const fullName = args.fullName.trim();
+  const notes = normalizeNotes(args.notes);
 
   if (fullName.length < 2) {
     throw new Error("Please enter a full name.");
@@ -53,9 +74,11 @@ function validateRsvpInput(args: {
     throw new Error("Name is too long.");
   }
 
-  if (args.attending === "yes") {
+  if (requiresMailingAddress(args.attending)) {
     if (!args.mailingAddress) {
-      throw new Error("Mailing address is required for attending guests.");
+      throw new Error(
+        "Mailing address is required for attending and unsure guests.",
+      );
     }
 
     const address = trimAddress(args.mailingAddress);
@@ -73,6 +96,7 @@ function validateRsvpInput(args: {
       fullName,
       attending: args.attending,
       mailingAddress: address,
+      notes,
     };
   }
 
@@ -80,21 +104,13 @@ function validateRsvpInput(args: {
     fullName,
     attending: args.attending,
     mailingAddress: undefined,
+    notes,
   };
 }
 
 async function insertRsvp(
   ctx: MutationCtx,
-  args: {
-    fullName: string;
-    attending: AttendanceValue;
-    mailingAddress?: {
-      street: string;
-      city: string;
-      province: string;
-      postalCode: string;
-    };
-  },
+  args: RsvpInput,
 ): Promise<Id<"rsvps">> {
   const fields = validateRsvpInput(args);
 
@@ -109,6 +125,7 @@ export const submit = mutation({
     fullName: v.string(),
     attending: guestAttendance,
     mailingAddress: v.optional(mailingAddress),
+    notes: v.optional(v.string()),
   },
   returns: v.id("rsvps"),
   handler: async (ctx, args) => {
@@ -121,6 +138,7 @@ export const createManual = mutation({
     fullName: v.string(),
     attending: attendance,
     mailingAddress: v.optional(mailingAddress),
+    notes: v.optional(v.string()),
   },
   returns: v.id("rsvps"),
   handler: async (ctx, args) => {
@@ -134,6 +152,7 @@ export const updateManual = mutation({
     fullName: v.string(),
     attending: attendance,
     mailingAddress: v.optional(mailingAddress),
+    notes: v.optional(v.string()),
   },
   returns: v.null(),
   handler: async (ctx, args) => {

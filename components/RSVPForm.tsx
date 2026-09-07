@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { wedding } from "@/config/wedding";
 import { handleRSVPSubmit } from "@/lib/rsvp";
-import type { Attendance } from "@/lib/rsvp-types";
+import { requiresMailingAddress, type Attendance } from "@/lib/rsvp-types";
 
 const attendanceOptions: { value: Attendance; label: string }[] = [
   { value: "yes", label: "I'll be there" },
@@ -18,6 +18,7 @@ export function RSVPForm() {
   const [city, setCity] = useState("");
   const [province, setProvince] = useState("");
   const [postalCode, setPostalCode] = useState("");
+  const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle",
   );
@@ -39,7 +40,7 @@ export function RSVPForm() {
     }
 
     if (
-      attending === "yes" &&
+      requiresMailingAddress(attending) &&
       (!street.trim() || !city.trim() || !province.trim() || !postalCode.trim())
     ) {
       setStatus("error");
@@ -51,18 +52,20 @@ export function RSVPForm() {
     setErrorMessage("");
 
     try {
+      const trimmedNotes = notes.trim();
+
       await handleRSVPSubmit({
         fullName: fullName.trim(),
         attending,
-        mailingAddress:
-          attending === "yes"
-            ? {
-                street: street.trim(),
-                city: city.trim(),
-                province: province.trim(),
-                postalCode: postalCode.trim(),
-              }
-            : undefined,
+        mailingAddress: requiresMailingAddress(attending)
+          ? {
+              street: street.trim(),
+              city: city.trim(),
+              province: province.trim(),
+              postalCode: postalCode.trim(),
+            }
+          : undefined,
+        notes: trimmedNotes || undefined,
       });
       setStatus("success");
     } catch (error) {
@@ -142,7 +145,7 @@ export function RSVPForm() {
               </div>
             </fieldset>
 
-            {attending === "yes" && (
+            {requiresMailingAddress(attending) && (
               <div className="mt-7 space-y-4">
                 <label className="block">
                   <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
@@ -211,6 +214,21 @@ export function RSVPForm() {
                 </p>
               </div>
             )}
+
+            <label className="mt-7 block">
+              <span className="font-sans text-[0.7rem] font-medium tracking-[0.18em] text-charcoal uppercase">
+                Notes <span className="tracking-normal normal-case">(optional)</span>
+              </span>
+              <textarea
+                name="notes"
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+                rows={3}
+                maxLength={1000}
+                className="mt-2 w-full resize-y border border-beige bg-linen px-4 py-3 font-sans text-base text-espresso placeholder:text-charcoal/40"
+                placeholder="Anything else you'd like us to know"
+              />
+            </label>
 
             {status === "error" && (
               <p className="mt-5 font-sans text-sm text-peach" role="alert">

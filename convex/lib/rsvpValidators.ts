@@ -15,7 +15,7 @@ export const attendance = v.union(
   v.literal("no_response"),
 );
 
-/** Mailing address — collected only when attending is "yes". */
+/** Mailing address — collected when attending is "yes" or "not_sure". */
 export const mailingAddress = v.object({
   street: v.string(),
   city: v.string(),
@@ -28,5 +28,6 @@ export const rsvpFields = {
   fullName: v.string(),
   attending: attendance,
   mailingAddress: v.optional(mailingAddress),
+  notes: v.optional(v.string()),
   submittedAt: v.number(),
 };
