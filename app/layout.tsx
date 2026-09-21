@@ -36,10 +36,10 @@ export const metadata: Metadata = {
     siteName: coupleNames,
     images: [
       {
-        url: "/images/visual-peaches.jpg",
-        width: 1200,
-        height: 675,
-        alt: `Ripe peaches and blossoms — ${coupleNames} Save the Date`,
+        url: "/images/hero-orchard.jpg",
+        width: 1600,
+        height: 2133,
+        alt: `Sunlit peach orchard — ${coupleNames} Save the Date`,
       },
     ],
   },
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: wedding.meta.title,
     description: wedding.meta.description,
-    images: ["/images/visual-peaches.jpg"],
+    images: ["/images/hero-orchard.jpg"],
   },
 };
 
